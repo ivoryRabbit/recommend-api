@@ -2,4 +2,5 @@
 .idea
 
 # format
-*/data/*
+*/data/*.csv
+*/data/_SUCCESS
