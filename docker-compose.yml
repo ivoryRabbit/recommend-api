@@ -1,0 +1,75 @@
+version: "3.7"
+
+services:
+  recommend:
+    build: ./recommend
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./recommend/:/app/
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URI=postgresql://recommend:recommend@meta/user
+      - HISTORY_URI=mongodb://fastapi_practice:fastapi_practice@mongo_test/test_db?authMechanism=SCRAM-SHA-1
+      - MODEL_SERVER_HOST_URL=http://model_server:8000/api/v1/inference
+    depends_on:
+      - meta
+#      - mongo_test
+
+  meta:
+    image: postgres:12.1-alpine
+    volumes:
+      - meta:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=recommend
+      - POSTGRES_PASSWORD=recommend
+      - POSTGRES_DB=user
+
+#  mongo_test:
+#    image: mongo:4.4.3
+#    restart: always
+#    volumes:
+#      - mongo_test:/var/lib/mongo/data/
+#      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+#    ports:
+#      - "27017:27017"
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=fastapi_practice
+#      - MONGO_INITDB_ROOT_PASSWORD=fastapi_practice
+#      - MONGO_INITDB_DATABASE=test_db
+
+#  model_server:
+#    build: ./model
+#    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+#    volumes:
+#      - ./model/:/app/
+#    ports:
+#      - "8002:8000"
+#    environment:
+#      - DATABASE_URI=postgresql://fastapi_practice:fastapi_practice@model/ml
+#    depends_on:
+#      - model
+
+#  model:
+#    image: postgres:12.1-alpine
+#    volumes:
+#      - model:/var/lib/postgresql/data/
+#    environment:
+#      - POSTGRES_USER=fastapi_practice
+#      - POSTGRES_PASSWORD=fastapi_practice
+#      - POSTGRES_DB=ml
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - recommend
+#      - model_server
+
+volumes:
+  meta:
+#  model:
+#  mongo_test:
