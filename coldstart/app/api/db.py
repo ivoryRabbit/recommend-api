@@ -1,6 +1,6 @@
 import os
 
-from app.service.config import RedisConfig
+from app.src.config import RedisConfig
 
 redis = RedisConfig(
     host=os.environ["REDIS_HOST"],

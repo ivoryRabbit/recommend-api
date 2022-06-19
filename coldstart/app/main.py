@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.router import bestseller
-from app.service import load_data, upload_data
+from app.src import load_data, upload_data
 
 
 app = FastAPI(

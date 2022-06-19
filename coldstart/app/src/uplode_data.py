@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 
-from app.service.model import BestSeller
-from app.service.config import Redis
+from app.src.model import BestSeller
+from app.src.config import Redis
 
 
 def upload_data(source_dir: str):
