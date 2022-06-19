@@ -1,7 +1,8 @@
 .venv
 .venv/*
 .idea
+*__pycache__*
 
 # format
-*/data/*.csv
-*/data/_SUCCESS
+*.csv
+_SUCCESS

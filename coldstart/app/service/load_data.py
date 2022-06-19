@@ -2,16 +2,18 @@ import glob
 import subprocess
 import zipfile
 import pandas as pd
+from urllib import request
 
 
-def load_data(root_path: str) -> None:
+def load_data(root_dir: str) -> None:
     """load Movie Lens data"""
-    marker = f"{root_path}/_SUCCESS"
+    marker = f"{root_dir}/_SUCCESS"
     if glob.glob(marker):
         return
 
-    download_url = f"https://files.grouplens.org/datasets/movielens/ml-1m.zip"
-    subprocess.check_call(f"curl {download_url} -O", shell=True)
+    download_url = "https://files.grouplens.org/datasets/movielens/ml-1m.zip"
+    request.urlretrieve(download_url, "ml-1m.zip")
+
     zip_file = zipfile.ZipFile("ml-1m.zip")
     zip_file.extractall()
 
@@ -25,15 +27,15 @@ def load_data(root_path: str) -> None:
         source_file_name = f"ml-1m/{dataset}.dat"
         df = pd.read_csv(
             source_file_name,
-            delimiter="::", names=columns, engine="python", encoding="ISO-8859-1"
+            delimiter="::",
+            names=columns,
+            engine="python",
+            encoding="ISO-8859-1"
         )
 
-        output_file_name = f"{root_path}/{dataset}.csv"
+        output_file_name = f"{root_dir}/{dataset}.csv"
         df.to_csv(output_file_name, index=False)
 
     subprocess.check_call("rm ml-1m.zip", shell=True)
     subprocess.check_call("rm -r ml-1m", shell=True)
     subprocess.check_call(f"touch {marker}", shell=True)
-
-
-load_data(root_path="data")
